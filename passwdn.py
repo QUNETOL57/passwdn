@@ -1,16 +1,16 @@
-import sqlite3,os,getpass,time
-from hashlib import sha224
+import sqlite3,os,time
+# import getpass
 
 
 def start(limit_start = 0,limit = 10):
-	os.system('cls')
-	print("—"*60)
+	os.system('clear')
+	print("—"*50)
 	print("Service list: ")
 	for row in cursor.execute("""SELECT * FROM data LIMIT {},{}""".format(limit_start,limit)):
 		if row[0] < 10:
 			print("",str(row[0])+"|", row[1])
 		else:
-			print(str(row[0])+"|", row[1])		
+			print(str(row[0])+"|", row[1])
 
 def start_down(limit):
 	global st
@@ -25,8 +25,8 @@ def start_up(limit):
 		st-=limit
 
 def show(columns,show_num):
-	os.system('cls')
-	print("—"*60)
+	os.system('clear')
+	print("—"*50)
 	lines = []
 	for row in cursor.execute("""SELECT * FROM data WHERE service_num={}""".format(show_num)):
 		for i in range(1,len(row)):
@@ -36,19 +36,19 @@ def show(columns,show_num):
 			value += " "* (18 - len(value))
 		print(value + "|",lines[key])
 
-	print("—"*60)
+	print("—"*50)
 	print("edit [e] | delete [d] | back [b] |")
-	print("—"*60)
+	print("—"*50)
 	inp = input()
 	if inp == 'back' or inp == 'b' or inp == 'BACK' or inp == 'B':
-		os.system('cls')
+		os.system('clear')
 	elif inp == 'edit' or inp == 'EDIT' or inp == 'ed' or inp == 'ED' or inp == 'e' or inp == 'E':
 		edit(show_num)
 	elif inp == 'delete' or inp == 'DELETE' or inp == 'del' or inp == 'DEL' or inp == 'd' or inp == 'D':
 		delete(show_num)
 
 def add():
-	os.system('cls')
+	os.system('clear')
 	cursor.execute("""SELECT * FROM data""")
 	num = len(cursor.fetchall()) + 1
 	name = input("Service name      |")
@@ -62,8 +62,8 @@ def add():
 	conn.commit()
 
 def edit(show_num):
-	os.system('cls')
-	print("—"*60)
+	os.system('clear')
+	print("—"*50)
 	lines = []
 	columns = {1:'service_name',2:'service_adress',3:'service_telnumber',4:'service_nickname',5:'service_email',6:'service_password'}
 	for row in cursor.execute("""SELECT * FROM data WHERE service_num={}""".format(show_num)):
@@ -74,19 +74,19 @@ def edit(show_num):
 		if len(value) != 18:
 			value += " "* (18 - len(value))
 		print(str(key)+"|",value + "|",lines[key-1])
-	print("—"*60)
+	print("—"*50)
 	inp = int(input())
 	inp2 = input()
 	cursor.execute("""UPDATE data SET {0} = '{2}' WHERE {0} = '{1}' AND service_num == {3} """.format(columns[inp],lines[inp-1],inp2,show_num))
 	conn.commit()
 
 def delete(show_num):
-	os.system('cls')
-	print("—"*60)
+	os.system('clear')
+	print("—"*50)
 	for row in cursor.execute("""SELECT * FROM data WHERE service_num={}""".format(show_num)):
 		for i in row:
 			print(i)
-	print("—"*60)
+	print("—"*50)
 	print("[!] DELETE THIS? |",end=" ")
 	inp = input()
 	if inp == 'yes' or inp == 'y' or inp == 'YES' or inp == 'Y':
@@ -94,14 +94,14 @@ def delete(show_num):
 		conn.commit()
 
 def logo():
-	print("—"*60)
+	print("—"*50)
 	print("______                         _ _   _ ".center(60))
 	print("| ___ \\                       | | \\ | |".center(60))
 	print("| |_/ /_ _ ___ _____      ____| |  \\| |".center(60))
 	print("|  __/ _` / __/ __\\ \\ /\\ / / _` | . ` |".center(60))
 	print("| | | (_| \\__ \\__ \\\\ V  V / (_| | |\\  |".center(60))
 	print("\\_|  \\__,_|___/___/ \\_/\\_/ \\__,_\\_| \\_/".center(60))
-	print("—"*60)
+	print("—"*50)
 
 def en(s):
 	sig  = sha224(s.encode()).hexdigest()
@@ -110,35 +110,35 @@ def en(s):
 def user(s):
 	for row in cursor.execute("""SELECT * FROM user"""):
 		for i in range(0,len(row)):
-			s.append(row[i])	
+			s.append(row[i])
 
-def login_in(sms,s):	
-	user(s)
-	while True:
-		os.system('cls')
-		logo()
-		print("[!] Enter 'e' or 'exit' for exit.")
-		print(sms)
-		login = input("Login: ")
-		if login == 'e' or login == 'exit':
-			os.system('cls')
-			quit()
-		elif en(login) != s[0]:
-			sms = "[X] Incorrect Login."
-			continue
-		password = getpass.getpass('Password:')
-		if password == 'e' or password == 'exit':
-			os.system('cls')
-			quit()
-		elif en(password) != s[1]:
-			sms = "[X] Incorrect Password."
-			continue
-		print("—"*60)
-		print("Welcome".center(60))
-		print("—"*60)
-		time.sleep(1)
-		os.system('cls')
-		break
+# def login_in(sms,s):
+# 	user(s)
+# 	while True:
+# 		os.system('clear')
+# 		logo()
+# 		print("[!] Enter 'e' or 'exit' for exit.")
+# 		print(sms)
+# 		login = input("Login: ")
+# 		if login == 'e' or login == 'exit':
+# 			os.system('clear')
+# 			quit()
+# 		elif en(login) != s[0]:
+# 			sms = "[X] Incorrect Login."
+# 			continue
+# 		password = getpass.getpass('Password:')
+# 		if password == 'e' or password == 'exit':
+# 			os.system('clear')
+# 			quit()
+# 		elif en(password) != s[1]:
+# 			sms = "[X] Incorrect Password."
+# 			continue
+# 		print("—"*50)
+# 		print("Welcome".center(60))
+# 		print("—"*50)
+# 		time.sleep(1)
+# 		os.system('clear')
+# 		break
 
 
 def main_page(columns):
@@ -146,12 +146,12 @@ def main_page(columns):
 	while True:
 		try:
 			start(st,limit)
-			print("—"*60)
+			print("—"*50)
 			print(" up [u] | down [d] | select | add [a] | help [h] | exit [e]")
-			print("—"*60)
+			print("—"*50)
 			inp = input()
 			if inp == 'exit' or inp == 'e' or inp == 'EXIT' or inp == 'quit' or inp == 'q' or inp == 'Q' or inp == 'E':
-				os.system('cls')
+				os.system('clear')
 				break
 			elif inp == 'add' or inp == 'ADD' or inp == 'a' or inp == 'ad' or inp == 'A':
 				add()
@@ -160,7 +160,7 @@ def main_page(columns):
 			elif inp == 'u' or inp == 'up'or inp == 'UP' or inp == 'U':
 				start_up(limit)
 			else:
-				
+
 				show(columns1,inp)
 		except:
 			continue
