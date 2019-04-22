@@ -1,32 +1,36 @@
 import sqlite3,os,time
-# import getpass
-
+import qcli
+import settings
+import gen_pass
+import cript
 
 def start(limit_start = 0,limit = 10):
-	os.system('clear')
-	print("—"*50)
+	settings.clear()
+	print("—"*settings.LINE_WIDTH)
 	print("Service list: ")
 	for row in cursor.execute("""SELECT * FROM data LIMIT {},{}""".format(limit_start,limit)):
 		if row[0] < 10:
-			print("",str(row[0])+"|", row[1])
+			print("",str(row[0])+"|", cript.encryptDecrypt('D',row[1],settings.KEY))
 		else:
-			print(str(row[0])+"|", row[1])
+			print(str(row[0])+"|", cript.encryptDecrypt('D',row[1],settings.KEY))
 
-def start_down(limit):
-	global st
-	cursor.execute("""SELECT * FROM data""")
-	if st+limit < len(cursor.fetchall()):
-		st+= limit
+def start_down():
+    global st
+    global limit
+    cursor.execute("""SELECT * FROM data""")
+    if st+limit < len(cursor.fetchall()):
+        st+= limit
 
-def start_up(limit):
-	global st
-	cursor.execute("""SELECT * FROM data""")
-	if st-limit >= 0:
-		st-=limit
+def start_up():
+    global st
+    global limit
+    cursor.execute("""SELECT * FROM data""")
+    if st-limit >= 0:
+        st-=limit
 
 def show(columns,show_num):
-	os.system('clear')
-	print("—"*50)
+	settings.clear()
+	print("—"*settings.LINE_WIDTH)
 	lines = []
 	for row in cursor.execute("""SELECT * FROM data WHERE service_num={}""".format(show_num)):
 		for i in range(1,len(row)):
@@ -34,21 +38,21 @@ def show(columns,show_num):
 	for key,value in columns.items():
 		if len(value) != 18:
 			value += " "* (18 - len(value))
-		print(value + "|",lines[key])
+		print(value + "|",cript.encryptDecrypt('D',lines[key],settings.KEY))
 
-	print("—"*50)
+	print("—"*settings.LINE_WIDTH)
 	print("edit [e] | delete [d] | back [b] |")
-	print("—"*50)
+	print("—"*settings.LINE_WIDTH)
 	inp = input()
 	if inp == 'back' or inp == 'b' or inp == 'BACK' or inp == 'B':
-		os.system('clear')
+		settings.clear()
 	elif inp == 'edit' or inp == 'EDIT' or inp == 'ed' or inp == 'ED' or inp == 'e' or inp == 'E':
 		edit(show_num)
 	elif inp == 'delete' or inp == 'DELETE' or inp == 'del' or inp == 'DEL' or inp == 'd' or inp == 'D':
 		delete(show_num)
 
 def add():
-	os.system('clear')
+	settings.clear()
 	cursor.execute("""SELECT * FROM data""")
 	num = len(cursor.fetchall()) + 1
 	name = input("Service name      |")
@@ -57,13 +61,20 @@ def add():
 	nickname = input("Service nickname  |")
 	email = input("Service email     |")
 	password = input("Service password  |")
-	addlist = [(num,name,adress,telnumber,nickname,email,password)]
+	addlist = [(
+		num,
+	    cript.encryptDecrypt('E',name,settings.KEY),
+	    cript.encryptDecrypt('E',adress,settings.KEY),
+	    cript.encryptDecrypt('E',telnumber,settings.KEY),
+	    cript.encryptDecrypt('E',nickname,settings.KEY),
+	    cript.encryptDecrypt('E',email,settings.KEY),
+	    cript.encryptDecrypt('E',password,settings.KEY),)]
 	cursor.executemany("""INSERT INTO data VALUES (?,?,?,?,?,?,?)""", addlist)
 	conn.commit()
 
 def edit(show_num):
-	os.system('clear')
-	print("—"*50)
+	settings.clear()
+	print("—"*settings.LINE_WIDTH)
 	lines = []
 	columns = {1:'service_name',2:'service_adress',3:'service_telnumber',4:'service_nickname',5:'service_email',6:'service_password'}
 	for row in cursor.execute("""SELECT * FROM data WHERE service_num={}""".format(show_num)):
@@ -73,101 +84,52 @@ def edit(show_num):
 	for key,value in columns.items():
 		if len(value) != 18:
 			value += " "* (18 - len(value))
-		print(str(key)+"|",value + "|",lines[key-1])
-	print("—"*50)
+		print(str(key)+"|",value + "|",cript.encryptDecrypt('D',lines[key-1],settings.KEY))
+	print("—"*settings.LINE_WIDTH)
 	inp = int(input())
 	inp2 = input()
+	inp2 = cript.encryptDecrypt('E',inp2,settings.KEY)
 	cursor.execute("""UPDATE data SET {0} = '{2}' WHERE {0} = '{1}' AND service_num == {3} """.format(columns[inp],lines[inp-1],inp2,show_num))
 	conn.commit()
 
 def delete(show_num):
-	os.system('clear')
-	print("—"*50)
+	settings.clear()
+	print("—"*settings.LINE_WIDTH)
 	for row in cursor.execute("""SELECT * FROM data WHERE service_num={}""".format(show_num)):
 		for i in row:
 			print(i)
-	print("—"*50)
+	print("—"*settings.LINE_WIDTH)
 	print("[!] DELETE THIS? |",end=" ")
 	inp = input()
 	if inp == 'yes' or inp == 'y' or inp == 'YES' or inp == 'Y':
 		cursor.execute("""DELETE FROM data WHERE service_num = {}""".format(show_num))
 		conn.commit()
 
-def logo():
-	print("—"*50)
-	print("______                         _ _   _ ".center(60))
-	print("| ___ \\                       | | \\ | |".center(60))
-	print("| |_/ /_ _ ___ _____      ____| |  \\| |".center(60))
-	print("|  __/ _` / __/ __\\ \\ /\\ / / _` | . ` |".center(60))
-	print("| | | (_| \\__ \\__ \\\\ V  V / (_| | |\\  |".center(60))
-	print("\\_|  \\__,_|___/___/ \\_/\\_/ \\__,_\\_| \\_/".center(60))
-	print("—"*50)
+def gen():
+    gen_pass.gen_pass()
 
-def en(s):
-	sig  = sha224(s.encode()).hexdigest()
-	return sig
+def main_page(columns,actions):
+    global st,limit
+    while True:
+        try:
+            start(st,limit)
+            print("—"*settings.LINE_WIDTH)
+            print(" up [u] | down [d] | select | add [a] | help [h] | exit [e]")
+            print("—"*settings.LINE_WIDTH)
+            inp = input()
+            if inp in actions:
+                if actions[inp] == exit:
+                    settings.clear()
+                    break
+                else:
+                    actions[inp]()
+            else:
+                show(columns1,inp)
+        except:
+            continue
+        conn.commit()
 
-def user(s):
-	for row in cursor.execute("""SELECT * FROM user"""):
-		for i in range(0,len(row)):
-			s.append(row[i])
-
-# def login_in(sms,s):
-# 	user(s)
-# 	while True:
-# 		os.system('clear')
-# 		logo()
-# 		print("[!] Enter 'e' or 'exit' for exit.")
-# 		print(sms)
-# 		login = input("Login: ")
-# 		if login == 'e' or login == 'exit':
-# 			os.system('clear')
-# 			quit()
-# 		elif en(login) != s[0]:
-# 			sms = "[X] Incorrect Login."
-# 			continue
-# 		password = getpass.getpass('Password:')
-# 		if password == 'e' or password == 'exit':
-# 			os.system('clear')
-# 			quit()
-# 		elif en(password) != s[1]:
-# 			sms = "[X] Incorrect Password."
-# 			continue
-# 		print("—"*50)
-# 		print("Welcome".center(60))
-# 		print("—"*50)
-# 		time.sleep(1)
-# 		os.system('clear')
-# 		break
-
-
-def main_page(columns):
-	global st,limit
-	while True:
-		try:
-			start(st,limit)
-			print("—"*50)
-			print(" up [u] | down [d] | select | add [a] | help [h] | exit [e]")
-			print("—"*50)
-			inp = input()
-			if inp == 'exit' or inp == 'e' or inp == 'EXIT' or inp == 'quit' or inp == 'q' or inp == 'Q' or inp == 'E':
-				os.system('clear')
-				break
-			elif inp == 'add' or inp == 'ADD' or inp == 'a' or inp == 'ad' or inp == 'A':
-				add()
-			elif inp == 'd' or inp == 'D' or inp == 'down' or inp == 'DOWN':
-				start_down(limit)
-			elif inp == 'u' or inp == 'up'or inp == 'UP' or inp == 'U':
-				start_up(limit)
-			else:
-
-				show(columns1,inp)
-		except:
-			continue
-		conn.commit()
-
-
-conn = sqlite3.connect("pswd.db")
+conn = sqlite3.connect(settings.NAME + ".db")
 cursor = conn.cursor()
 user_log = []
 sms= ''
@@ -175,7 +137,14 @@ st = 0
 limit = 10
 columns = {0:'Service number',1:'Service name',2:'Service adress',3:'Service telnumber',4:'Service nickname',5:'Service email',6:'Service password'}
 columns1 = {0:'Service name',1:'Service adress',2:'Service telnumber',3:'Service nickname',4:'Service email',5:'Service password'}
+actions = {
+    'q' : exit,'Q' : exit,'e' : exit,'E' : exit,
+    'a' : add,'add' : add,'ad' : add,'A' : add,
+    'd': start_down,'D': start_down,'down': start_down,'DOWN' : start_down,
+    'u' : start_up,'U' : start_up,'up' : start_up,'UP' : start_up,
+    'g' : gen,'gen' : gen,'G' : gen,'GEN' : gen
+}
 
 if __name__ == '__main__':
-	#login_in(sms,user_log)
-	main_page(columns)
+    # qcli.User_QCLI(settings.NAME)
+    main_page(columns,actions)
