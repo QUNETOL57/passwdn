@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "nodal-alloy-229518",
+  "private_key_id": "b3c11c3d92f96bb286f20e1b2a6d82937092c16f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCUcaXvZos8e4fu\nLGFqpCxm6MS8TGjRyxp7V852D1anc/gdC3v6SwZyxC4tS/84YWddYvftTmo1BwO8\nmUu2bYd4ZhOYEyY9JNa4OqXTaoEC8mePJlMhWZP/RG+UaIUIiARn28E99a+MkG0K\nhYxX+ueBtIH7D4Y1WHEOpPiqkH0LCP3ePz0V7fclQMFUlhdLxk21PjMHppYqkgMA\nTx1Vv2WohY94UJto4fWdSzuv7WnpIglkcoL+IX34eyJttzBjZZhBx0QJAA8OjE+8\nVSzvFojzlno9oRXvusk8/PUl5f43U4z2ds6qvnRqz2+AHtwOc0MNmnwfwe3Gfw6d\nGZzI1/lLAgMBAAECggEADLOCrq63+CdbtJnQhgbhE7cT6kaha130+JvFOx3J3M8T\n6ixK4dochaJajx6jCkhvRzLKIuBkPwBIJhF5xHSvtDILuCXfTjkCNEY0XRgOTNm/\n2aQ+Vaqr+pn48BpXU6kLs3U+nhYQ/LZ41f8iSH7b4yG2Q2yLH7JfDhE4g6OUR2bO\nsdlcm7TAMJYvBWuzjgDx700/OS7WnBGoV6wdlDe1Lhhygdw0k3J7BvPW+3dM7uHU\ndtq6mA/FHw8mT4N/7VltErX9XZPPQAmwNZwioh6s6N3H4+FWviPMP6VsoO/5+r8E\nQD/awyY7qWrFGW2LjbqtTXRySfa+kFnDldKBAZviRQKBgQDD3CgnXl5M0G9ADh8q\nCVzQDbUz5cweiI51ynp1cRM8zuM4/XN1Egfo1Xj5jvhCYnzYpEG66D0T3RXRM1VC\nzK3zTzRVd7qUI7838i//3ahT/kdCi5xhiyDPQjsaEzsfhwAHkVW9T4ooPe4Lrk9G\nVSnw6lAGlOJfeIjpGCCvsrd6ZQKBgQDCBkmly5YnIbFQiSdU59A8bXqXho+4QlXk\nHmmcThKQcjN8vv3RR850h8aqV0WfZxwZ3r8bjI0MgMdujYCzdNOcRGeDJH6rKB26\nWMupdhTimRqukZ305t7wzkh/RVCYNoYa2e2MNW0wo73TS6cLs6kZhZ3Jr3CeEsey\nib0yYfwR7wKBgQCWTwPFysdF3gQyvWOvSAYhaROx41415Iin3x8BuCiSVxfMKb4M\njyzgw8sWgmEF2T2EqPIEtawB7X6L0QBSxm+MtTEtkjfu7kwWbFfn3b0L0K3xZOE7\nfqFMTcC7rxyFgn5EUIXjRgJ6BaUE893E1SDd0YReuK3NpNw1Pp3/GIF0fQKBgQCH\ntHoiekilSg2I9MULv6+H9FLAVJ+FEvCcQyE+7+RQH3Afmj5Q+FZQbv7m+W961FV1\nSrSEAkRNMG1Mx6/y1I2FSNrVgNsPv1k7kwuvlSV6b/eXjcXbGvdnmgBe9A4wyEH3\n2eEqJdwfHweQF+PYbWqirS/1dr3f8ea221v3N01lBQKBgCPteFLNqIWX945dmssZ\njZ/M+Xu67CNQ55nC4IdGOe5/tzFesQQ0iy2DlHioxYIFlTr8aAFG463kk9BqAeLC\nKI0y5d81TvaCqEqfZb78bomjjTCMzWUajQTkI8g+TY6vcy31NZZkPkdNnwq1rYQe\nSDftU2y8FwFbfVu39wteE3Eu\n-----END PRIVATE KEY-----\n",
+  "client_email": "passwdn-master@nodal-alloy-229518.iam.gserviceaccount.com",
+  "client_id": "108870855900380311493",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/passwdn-master%40nodal-alloy-229518.iam.gserviceaccount.com"
+}
