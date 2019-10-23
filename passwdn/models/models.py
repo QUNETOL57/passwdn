@@ -1,15 +1,15 @@
 import sqlite3
 
-
 class ContactModel(object):
     def __init__(self):
         # Create a database in RAM
-        self._db = sqlite3.connect(':memory:')
+        # self._db = sqlite3.connect(':memory:')
+        self._db = sqlite3.connect('base.sqlite3')
         self._db.row_factory = sqlite3.Row
 
         # Create the basic contact table.
         self._db.cursor().execute('''
-            CREATE TABLE contacts(
+            CREATE TABLE IF NOT EXISTS contacts(
                 id INTEGER PRIMARY KEY,
                 name TEXT,
                 phone TEXT,
