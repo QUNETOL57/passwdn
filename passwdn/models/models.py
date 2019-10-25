@@ -1,75 +1,6 @@
 import sqlite3
 
 
-#
-# class ContactModel(object):
-#     def __init__(self):
-#         # Create a database in RAM
-#         # self._db = sqlite3.connect(':memory:')
-#         self._db = sqlite3.connect('base.sqlite3')
-#         self._db.row_factory = sqlite3.Row
-#
-#         # Create the basic contact table.
-#         self._db.cursor().execute('''
-#             CREATE TABLE IF NOT EXISTS contacts(
-#                 id INTEGER PRIMARY KEY,
-#                 name TEXT,
-#                 phone TEXT,
-#                 address TEXT,
-#                 email TEXT,
-#                 notes TEXT)
-#         ''')
-#         self._db.commit()
-#
-#         # Current contact when editing.
-#         self.current_id = None
-#
-#     def add(self, contact):
-#         self._db.cursor().execute(
-#             '''
-#             INSERT INTO contacts(name, phone, address, email, notes)
-#             VALUES(:name, :phone, :address, :email, :notes)''', contact)
-#         self._db.commit()
-#
-#     def get_summary(self):
-#         return self._db.cursor().execute(
-#             "SELECT name, id from contacts").fetchall()
-#
-#     def get_contact(self, contact_id):
-#         return self._db.cursor().execute("SELECT * from contacts WHERE id=:id",
-#                                          {
-#                                              "id": contact_id
-#                                          }).fetchone()
-#
-#     def get_current_contact(self):
-#         if self.current_id is None:
-#             return {
-#                 "name": "",
-#                 "address": "",
-#                 "phone": "",
-#                 "email": "",
-#                 "notes": ""
-#             }
-#         else:
-#             return self.get_contact(self.current_id)
-#
-#     def update_current_contact(self, details):
-#         if self.current_id is None:
-#             self.add(details)
-#         else:
-#             self._db.cursor().execute(
-#                 '''
-#                 UPDATE contacts SET name=:name, phone=:phone, address=:address,
-#                 email=:email, notes=:notes WHERE id=:id''', details)
-#             self._db.commit()
-#
-#     def delete_contact(self, contact_id):
-#         self._db.cursor().execute(
-#             '''
-#             DELETE FROM contacts WHERE id=:id''', {"id": contact_id})
-#         self._db.commit()
-
-
 class MainModel(object):
     db_name = 'base.sqlite3'
     db_tables = {
@@ -92,8 +23,15 @@ class MainModel(object):
             self.db.cursor().execute(self.sql)
             self.db.commit()
 
-    def select(self):
-        sql = f"SELECT {self.str_columns(id=True)} from {self.table_name}"
+    def count(self):
+        return self.db.cursor().execute(f"SELECT COUNT(*) FROM {self.table_name}").fetchone()[0]
+
+    def select_all(self):
+        sql = f"SELECT {self.str_columns(id=True)} FROM {self.table_name}"
+        return self.db.cursor().execute(sql).fetchall()
+
+    def select_current(self):
+        sql = f"SELECT {self.str_columns(id=True)} FROM {self.table_name} WHERE id={self.current_id}"
         return self.db.cursor().execute(sql).fetchall()
 
     def add(self, data):
@@ -101,16 +39,18 @@ class MainModel(object):
         self.db.cursor().execute(sql)
         self.db.commit()
 
-    def delete(self, id):
-        sql = f"DELETE FROM {self.table_name} WHERE id={id}"
+    def delete(self):
+        sql = f"DELETE FROM {self.table_name} WHERE id={self.current_id}"
         self.db.cursor().execute(sql)
         self.db.commit()
 
     def update(self, values):
         sql = f"UPDATE {self.table_name} SET "
-        for i in range(values):
-            sql += f"{values[i]}={self.table_columns[i + 1]}, "
-        sql = sql[:-2] + f"WHERE id={self.current_id}"
+        for i in range(len(values)):
+            sql += f"{self.table_columns[i + 1]} = '{values[i]}', "
+        sql = sql[:-2] + f" WHERE id={self.current_id}"
+        self.db.cursor().execute(sql)
+        self.db.commit()
 
     def quit(self):
         self.db.close()
@@ -131,74 +71,21 @@ class LoginModel(MainModel):
         super().__init__(self.table_name)
 
 
-m = LoginModel()
+class StoreModel(MainModel):
+    table_name = 'store'
+
+    def __init__(self):
+        super().__init__(self.table_name)
+
+
+# m = LoginModel()
 # m.add(['admin', 'password'])
 # m.delete(1)
-print(m.select())
-m.quit()
+# m.current_id = 2
+# m.update(['aaa', 'jjdfdj'])
+# print(m.select_current())
+# m.delete()
+# print(m.select_all())
+# print(m.count())
 
-# class LoginModel(object):
-#
-#     table_name = 'login'
-#     table_columns = []
-#
-#     def __init__(self):
-#         self._db = sqlite3.connect('base.sqlite3')
-#         self._db.row_factory = sqlite3.Row
-#
-#         # Create the basic contact table.
-#         self._db.cursor().execute('''
-#             CREATE TABLE IF NOT EXISTS login(
-#                 id INTEGER PRIMARY KEY,
-#                 login TEXT,
-#                 password TEXT)
-#         ''')
-#         self._db.commit()
-#
-#         # Current contact when editing.
-#         self.current_id = None
-#
-#     def add(self, contact):
-#         self._db.cursor().execute(
-#             '''
-#             INSERT INTO contacts(name, phone, address, email, notes)
-#             VALUES(:name, :phone, :address, :email, :notes)''', contact)
-#         self._db.commit()
-#
-#     def get_summary(self):
-#         return self._db.cursor().execute(
-#             "SELECT name, id from contacts").fetchall()
-#
-#     def get_contact(self, contact_id):
-#         return self._db.cursor().execute("SELECT * from contacts WHERE id=:id",
-#                                          {
-#                                              "id": contact_id
-#                                          }).fetchone()
-#
-#     def get_current_contact(self):
-#         if self.current_id is None:
-#             return {
-#                 "name": "",
-#                 "address": "",
-#                 "phone": "",
-#                 "email": "",
-#                 "notes": ""
-#             }
-#         else:
-#             return self.get_contact(self.current_id)
-#
-#     def update_current_contact(self, details):
-#         if self.current_id is None:
-#             self.add(details)
-#         else:
-#             self._db.cursor().execute(
-#                 '''
-#                 UPDATE contacts SET name=:name, phone=:phone, address=:address,
-#                 email=:email, notes=:notes WHERE id=:id''', details)
-#             self._db.commit()
-#
-#     def delete_contact(self, contact_id):
-#         self._db.cursor().execute(
-#             '''
-#             DELETE FROM contacts WHERE id=:id''', {"id": contact_id})
-#         self._db.commit()
+# m.quit()
