@@ -1,4 +1,5 @@
 from cryptography.fernet import Fernet
+import os.path
 
 
 class CryptController(object):
@@ -6,17 +7,21 @@ class CryptController(object):
         self.step = 13
         self.alpha = "".join(map(chr, range(ord(' '), ord('я') + 1)))
         self.key = self.get_key()
-        self.cipher = Fernet(self.key)
+        self.cipher = Fernet(bytes(str(self.get_key()), encoding='utf-8'))
 
     def gen_key(self):
         cipher_key = Fernet.generate_key()
         file_handler = open('../local/cipher.key', 'w')
         file_handler.write(str(cipher_key)[2:-1])
         file_handler.close()
+        return str(cipher_key)[2:-1]
 
     def get_key(self):
-        file_handler = open('../local/cipher.key', 'r')
-        return bytes(file_handler.read(), encoding='utf-8')
+        if os.path.isfile('../local/cipher.key'):
+            file_handler = open('../local/cipher.key', 'r')
+            return file_handler.read()
+        else:
+            self.gen_key()
 
     def encode(self, text):
         text = bytes(text, encoding='utf-8')
@@ -32,6 +37,6 @@ class CryptController(object):
 
 
 
-# c = CryptController().gen_key()
+c = CryptController()
 # cript = c.encode('serpent26rus@gmail.com')
 # print(cript, c.decode(cript))

@@ -2,21 +2,21 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
 import sys
-from models.models import ContactModel
+from models.models import LoginModel, StoreModel
 from views.views import ContactView,ListView,LoginView
 
 
 def demo(screen, scene):
     scenes = [
         Scene([LoginView(screen, contacts)], -1, name='Login'),
-        Scene([ListView(screen, contacts)], -1, name="Main"),
-        Scene([ContactView(screen, contacts)], -1, name="Edit Contact")
+        # Scene([ListView(screen, contacts)], -1, name="Main"),
+        # Scene([ContactView(screen, contacts)], -1, name="Edit Contact")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
 
 
-contacts = ContactModel()
+contacts = LoginModel()
 last_scene = None
 while True:
     try:
