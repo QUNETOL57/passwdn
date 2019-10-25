@@ -113,20 +113,24 @@ class ListView(Frame):
 class LoginView(Frame):
     def __init__(self, screen, model):
         super(LoginView, self).__init__(screen,
-                                        screen.height * 2 // 6,
-                                        screen.width * 2 // 7,
+                                        # screen.height * 2 // 6,
+                                        15,
+                                        # screen.width * 2 // 7,
+                                        50,
                                         hover_focus=True,
                                         can_scroll=False,
-                                        title="Sign in",
-                                        reduce_cpu=True)
+                                        title="Sign in")
         # Save off the model that accesses the contacts database.
         self._model = model
+        self.set_theme("bright")
 
         # Create the form for displaying the list of contacts.
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Text("Login:", "login"))
-        layout.add_widget(Text("Password:", "password"))
+        # layout.add_widget(Text("Password:", "password"))
+        # layout.add_widget(Text("Password", name="password", on_change=self._on_change, hide_char="*"), 1)
+        layout.add_widget(Text("Password", name="password", hide_char="*"))
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
         layout2.add_widget(Button("OK", self._ok), 0)
@@ -136,12 +140,13 @@ class LoginView(Frame):
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
         super(LoginView, self).reset()
-        self.data = self._model.get_current_contact()
+        # self.data = self._model.get_current_contact()
 
     def _ok(self):
-        self.save()
-        self._model.update_current_contact(self.data)
-        raise NextScene("Main")
+        # self.save()
+        # self._model.update_current_contact(self.data)
+        # raise NextScene("Main")
+        pass
 
     @staticmethod
     def _quit():
