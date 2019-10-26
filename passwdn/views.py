@@ -124,13 +124,11 @@ class LoginView(Frame):
         self._model = model
         self.set_theme("bright")
 
-        # Create the form for displaying the list of contacts.
-        layout = Layout([100], fill_frame=True)
+        layout = Layout([1, 3, 1], fill_frame=True)
         self.add_layout(layout)
-        layout.add_widget(Text("Login:", "login"))
-        # layout.add_widget(Text("Password:", "password"))
-        # layout.add_widget(Text("Password", name="password", on_change=self._on_change, hide_char="*"), 1)
-        layout.add_widget(Text("Password", name="password", hide_char="*"))
+        layout.add_widget(Text("Login:", name="login"), 1)
+        # layout.add_widget(Divider(height=3), 1)
+        layout.add_widget(Text("Password", name="password", hide_char="*"), 1)
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
         layout2.add_widget(Button("OK", self._ok), 0)
@@ -143,6 +141,7 @@ class LoginView(Frame):
         # self.data = self._model.get_current_contact()
 
     def _ok(self):
+
         # self.save()
         # self._model.update_current_contact(self.data)
         # raise NextScene("Main")

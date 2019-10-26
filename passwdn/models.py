@@ -77,7 +77,7 @@ class StoreModel(MainModel):
     def __init__(self):
         super().__init__(self.table_name)
 
-
+# TODO убрать
 # m = LoginModel()
 # m.add(['admin', 'password'])
 # m.delete(1)
