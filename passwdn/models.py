@@ -13,7 +13,7 @@ class MainModel(object):
         self.table_columns = self.db_tables[self.table_name]
         # поля таблицы без id
         self.table_columns_short = self.table_columns[1:]
-        self.current_id = 2
+        self.current_id = None
 
         self.db = sqlite3.connect(self.db_name)
         # self.db.row_factory = sqlite3.Row
@@ -42,8 +42,8 @@ class MainModel(object):
         self.db.cursor().execute(sql)
         self.db.commit()
 
-    def delete(self):
-        sql = f"DELETE FROM {self.table_name} WHERE id={self.current_id}"
+    def delete(self, id):
+        sql = f"DELETE FROM {self.table_name} WHERE id={id}"
         self.db.cursor().execute(sql)
         self.db.commit()
 
@@ -79,6 +79,11 @@ class StoreModel(MainModel):
 
     def __init__(self):
         super().__init__(self.table_name)
+
+    def get_summary(self):
+        return self.db.cursor().execute(
+            "SELECT name, id from store").fetchall()
+        # return self.db.cursor().execute(f'SELECT {self.table_columns[:2]} from {self.table_name}').fetchall()
 
 # TODO убрать
 # m = LoginModel()

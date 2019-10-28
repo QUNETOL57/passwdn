@@ -42,10 +42,10 @@ class CryptController(object):
 
 class MainAction(object):
 
-    def __init__(self):
+    def __init__(self, login_model, store_model):
         self.crypt_controller = CryptController()
-        self.login_model = LoginModel()
-        self.store_model = StoreModel()
+        self.login_model = login_model
+        self.store_model = store_model
 
     def login_in(self, login, password):
         log = self.login_model.select_all()
@@ -66,17 +66,16 @@ class MainAction(object):
             return {
                 'name': '',
                 'address': '',
-                'nickname'
+                'nickname': '',
                 'email': '',
                 'telnumber': '',
-                'secretquest'
+                'secretquest': '',
                 'password': ''
             }
         else:
             return self.convert(self.store_model.select_current())
 
     def update_current(self, data):
-
         m = []
         for key in self.store_model.table_columns_short:
             m.append(data[key])
