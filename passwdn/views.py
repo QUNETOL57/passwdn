@@ -111,7 +111,7 @@ class ListView(Frame):
 
 
 class LoginView(Frame):
-    def __init__(self, screen, model):
+    def __init__(self, screen, controller, model):
         super(LoginView, self).__init__(screen,
                                         # screen.height * 2 // 6,
                                         15,
@@ -122,6 +122,7 @@ class LoginView(Frame):
                                         title="Sign in")
         # Save off the model that accesses the contacts database.
         self._model = model
+        self._controller = controller
         self.set_theme("bright")
 
         layout = Layout([1, 3, 1], fill_frame=True)
@@ -136,15 +137,14 @@ class LoginView(Frame):
         self.fix()
 
     def reset(self):
-        # Do standard reset to clear out form, then populate with new data.
         super(LoginView, self).reset()
-        # self.data = self._model.get_current_contact()
+        # self.data = self._model.select_all()
 
     def _ok(self):
-
-        # self.save()
-        # self._model.update_current_contact(self.data)
-        # raise NextScene("Main")
+        self.save()
+        usl = self._controller.login_in(self.data['login'], self.data['password'])
+        if usl is True:
+            raise StopApplication("User pressed quit")
         pass
 
     @staticmethod

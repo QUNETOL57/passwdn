@@ -52,7 +52,11 @@ class MainAction(object):
             for j in range(1, len(log[i]), 3):
                 if self.crypt_controller.decode(log[i][j]) == login:
                     if self.crypt_controller.decode(log[i][j+1]) == password:
-                        print(login, password)
+                        f = open('1.txt', 'w')
+                        f.write(f'{login} => {log[i][j+1]} \n{password} => {log[i][j+1]}')
+                        f.close()
+                        return True
+                        # print(login, password)
 
     # TODO сделать создание пользователя
     def create_prof(self, login, password):
@@ -71,5 +75,5 @@ class MainAction(object):
 
 
 # TODO убрать
-m = MainAction().login_in('admin','123')
+# m = MainAction().login_in('admin','123')
 # m = MainAction().create_prof('admin','123')
