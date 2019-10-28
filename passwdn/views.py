@@ -3,83 +3,125 @@ from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
 from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
 
 
-class ContactView(Frame):
-    def __init__(self, screen, model):
-        super(ContactView, self).__init__(screen,
-                                          screen.height * 2 // 3,
-                                          screen.width * 2 // 3,
-                                          hover_focus=True,
-                                          can_scroll=False,
-                                          title="Contact Details",
-                                          reduce_cpu=True)
+class LoginView(Frame):
+    def __init__(self, screen, controller, model):
+        super(LoginView, self).__init__(screen,
+                                        # screen.height * 2 // 6,
+                                        15,
+                                        # screen.width * 2 // 7,
+                                        50,
+                                        hover_focus=True,
+                                        can_scroll=False,
+                                        title='Sign in')
         # Save off the model that accesses the contacts database.
         self._model = model
+        self._controller = controller
+        self.set_theme('bright')
 
-        # Create the form for displaying the list of contacts.
-        layout = Layout([100], fill_frame=True)
+        layout = Layout([1, 3, 1], fill_frame=True)
         self.add_layout(layout)
-        layout.add_widget(Text("Name:", "name"))
-        layout.add_widget(Text("Address:", "address"))
-        layout.add_widget(Text("Phone number:", "phone"))
-        layout.add_widget(Text("Email address:", "email"))
-        layout.add_widget(
-            TextBox(Widget.FILL_FRAME,
-                    "Notes:",
-                    "notes",
-                    as_string=True,
-                    line_wrap=True))
+        layout.add_widget(Text('Login:', name='login'), 1)
+        # layout.add_widget(Divider(height=3), 1)
+        layout.add_widget(Text('Password', name='password', hide_char='*'), 1)
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
-        layout2.add_widget(Button("OK", self._ok), 0)
-        layout2.add_widget(Button("Cancel", self._cancel), 3)
+        layout2.add_widget(Button('OK', self._ok), 0)
+        layout2.add_widget(Button('Quit', self._quit), 3)
+        self.fix()
+
+    def reset(self):
+        super(LoginView, self).reset()
+        # self.data = self._model.select_all()
+
+    def _ok(self):
+        self.save()
+        usl = self._controller.login_in(self.data['login'], self.data['password'])
+        if usl is True:
+            raise NextScene('List')
+        pass
+
+    @staticmethod
+    def _quit():
+        raise StopApplication('User pressed quit')
+
+
+class DetailView(Frame):
+    def __init__(self, screen, controller, model):
+        super(DetailView, self).__init__(screen,
+                                         screen.height * 2 // 5,
+                                         screen.width * 2 // 5,
+                                         hover_focus=True,
+                                         can_scroll=False,
+                                         # title='Contact Details',
+                                         reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+        self._controller = controller
+        self.set_theme('bright')
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([1, 10, 1], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Text('Name:', 'name'), 1)
+        layout.add_widget(Text('Address:', 'address'), 1)
+        layout.add_widget(Text('Nick name:', 'nickname'), 1)
+        layout.add_widget(Text('Email address:', 'email'), 1)
+        layout.add_widget(Text('Phone number:', 'telnumber', validator='^[0-9]*$'), 1)
+        layout.add_widget(Text('Secret question:', 'secretquest'), 1)
+        layout.add_widget(Text('Password:', 'password'), 1)
+        layout2 = Layout([1, 1, 1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button('OK', self._ok), 0)
+        layout2.add_widget(Button('Cancel', self._cancel), 3)
         self.fix()
 
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
-        super(ContactView, self).reset()
-        self.data = self._model.get_current_contact()
+        super(DetailView, self).reset()
+        self.data = self._controller.get_current()
 
     def _ok(self):
         self.save()
-        self._model.update_current_contact(self.data)
-        raise NextScene("Main")
+        self._controller.update_current(self.data)
+        raise NextScene('List')
 
     @staticmethod
     def _cancel():
-        raise NextScene("Main")
+        raise NextScene('List')
 
 
 class ListView(Frame):
-    def __init__(self, screen, model):
+    def __init__(self, screen, controller, model):
         super(ListView, self).__init__(screen,
                                        screen.height * 2 // 3,
                                        screen.width * 2 // 3,
                                        on_load=self._reload_list,
                                        hover_focus=True,
                                        can_scroll=False,
-                                       title="Contact List")
+                                       title='Passwdn')
         # Save off the model that accesses the contacts database.
         self._model = model
-
+        self._controller = controller
+        self.set_theme('bright')
         # Create the form for displaying the list of contacts.
         self._list_view = ListBox(Widget.FILL_FRAME,
                                   model.get_summary(),
-                                  name="contacts",
+                                  name='store',
                                   add_scroll_bar=True,
                                   on_change=self._on_pick,
                                   on_select=self._edit)
-        self._edit_button = Button("Edit", self._edit)
-        self._delete_button = Button("Delete", self._delete)
+        self._edit_button = Button('Edit', self._edit)
+        self._delete_button = Button('Delete', self._delete)
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(self._list_view)
         layout.add_widget(Divider())
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
-        layout2.add_widget(Button("Add", self._add), 0)
+        layout2.add_widget(Button('Add', self._add), 0)
         layout2.add_widget(self._edit_button, 1)
         layout2.add_widget(self._delete_button, 2)
-        layout2.add_widget(Button("Quit", self._quit), 3)
+        layout2.add_widget(Button('Quit', self._quit), 3)
         self.fix()
         self._on_pick()
 
@@ -93,60 +135,18 @@ class ListView(Frame):
 
     def _add(self):
         self._model.current_id = None
-        raise NextScene("Edit Contact")
+        raise NextScene('Detail')
 
     def _edit(self):
         self.save()
-        self._model.current_id = self.data["contacts"]
-        raise NextScene("Edit Contact")
+        self._model.current_id = self.data['store']
+        raise NextScene('Detail')
 
     def _delete(self):
         self.save()
-        self._model.delete_contact(self.data["contacts"])
+        self._model.delete(self.data['store'])
         self._reload_list()
 
     @staticmethod
     def _quit():
-        raise StopApplication("User pressed quit")
-
-
-class LoginView(Frame):
-    def __init__(self, screen, controller, model):
-        super(LoginView, self).__init__(screen,
-                                        # screen.height * 2 // 6,
-                                        15,
-                                        # screen.width * 2 // 7,
-                                        50,
-                                        hover_focus=True,
-                                        can_scroll=False,
-                                        title="Sign in")
-        # Save off the model that accesses the contacts database.
-        self._model = model
-        self._controller = controller
-        self.set_theme("bright")
-
-        layout = Layout([1, 3, 1], fill_frame=True)
-        self.add_layout(layout)
-        layout.add_widget(Text("Login:", name="login"), 1)
-        # layout.add_widget(Divider(height=3), 1)
-        layout.add_widget(Text("Password", name="password", hide_char="*"), 1)
-        layout2 = Layout([1, 1, 1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(Button("OK", self._ok), 0)
-        layout2.add_widget(Button("Quit", self._quit), 3)
-        self.fix()
-
-    def reset(self):
-        super(LoginView, self).reset()
-        # self.data = self._model.select_all()
-
-    def _ok(self):
-        self.save()
-        usl = self._controller.login_in(self.data['login'], self.data['password'])
-        if usl is True:
-            raise StopApplication("User pressed quit")
-        pass
-
-    @staticmethod
-    def _quit():
-        raise StopApplication("User pressed quit")
+        raise StopApplication('User pressed quit')

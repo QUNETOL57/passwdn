@@ -11,7 +11,10 @@ class MainModel(object):
     def __init__(self, tname):
         self.table_name = tname
         self.table_columns = self.db_tables[self.table_name]
+        # поля таблицы без id
+        self.table_columns_short = self.table_columns[1:]
         self.current_id = None
+
         self.db = sqlite3.connect(self.db_name)
         # self.db.row_factory = sqlite3.Row
         # создание таблиц из db_tables
@@ -32,22 +35,22 @@ class MainModel(object):
 
     def select_current(self):
         sql = f"SELECT {self.str_columns(id=True)} FROM {self.table_name} WHERE id={self.current_id}"
-        return self.db.cursor().execute(sql).fetchall()
+        return self.db.cursor().execute(sql).fetchone()
 
     def add(self, data):
         sql = f"INSERT INTO {self.table_name}({self.str_columns()}) VALUES({self.str_columns(data, val=True)})"
         self.db.cursor().execute(sql)
         self.db.commit()
 
-    def delete(self):
-        sql = f"DELETE FROM {self.table_name} WHERE id={self.current_id}"
+    def delete(self, id):
+        sql = f"DELETE FROM {self.table_name} WHERE id={id}"
         self.db.cursor().execute(sql)
         self.db.commit()
 
-    def update(self, values):
+    def update(self, data):
         sql = f"UPDATE {self.table_name} SET "
-        for i in range(len(values)):
-            sql += f"{self.table_columns[i + 1]} = '{values[i]}', "
+        for i in range(len(data)):
+            sql += f"{self.table_columns_short[i]} = '{data[i]}', "
         sql = sql[:-2] + f" WHERE id={self.current_id}"
         self.db.cursor().execute(sql)
         self.db.commit()
@@ -58,7 +61,7 @@ class MainModel(object):
     def str_columns(self, columns=None, id=False, val=False):
         str_col = ''
         if columns is None:
-            columns = self.table_columns[1:] if (id is False) else self.table_columns
+            columns = self.table_columns_short if (id is False) else self.table_columns
         for col in columns:
             str_col += f"{col}, " if (val is False) else f"'{col}', "
         return str_col[:-2]
@@ -76,6 +79,11 @@ class StoreModel(MainModel):
 
     def __init__(self):
         super().__init__(self.table_name)
+
+    def get_summary(self):
+        return self.db.cursor().execute(
+            "SELECT name, id from store").fetchall()
+        # return self.db.cursor().execute(f'SELECT {self.table_columns[:2]} from {self.table_name}').fetchall()
 
 # TODO убрать
 # m = LoginModel()

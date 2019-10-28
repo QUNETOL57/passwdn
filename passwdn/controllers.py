@@ -42,9 +42,10 @@ class CryptController(object):
 
 class MainAction(object):
 
-    def __init__(self):
+    def __init__(self, login_model, store_model):
         self.crypt_controller = CryptController()
-        self.login_model = LoginModel()
+        self.login_model = login_model
+        self.store_model = store_model
 
     def login_in(self, login, password):
         log = self.login_model.select_all()
@@ -52,17 +53,43 @@ class MainAction(object):
             for j in range(1, len(log[i]), 3):
                 if self.crypt_controller.decode(log[i][j]) == login:
                     if self.crypt_controller.decode(log[i][j+1]) == password:
-                        f = open('1.txt', 'w')
-                        f.write(f'{login} => {log[i][j+1]} \n{password} => {log[i][j+1]}')
-                        f.close()
                         return True
-                        # print(login, password)
 
     # TODO сделать создание пользователя
     def create_prof(self, login, password):
         data = [self.crypt_controller.encode(login), self.crypt_controller.encode(password)]
         self.login_model.add(data)
         print(self.crypt_controller.decode(data[0]), self.crypt_controller.decode(data[1]))
+
+    def get_current(self):
+        if self.store_model.current_id is None:
+            return {
+                'name': '',
+                'address': '',
+                'nickname': '',
+                'email': '',
+                'telnumber': '',
+                'secretquest': '',
+                'password': ''
+            }
+        else:
+            return self.convert(self.store_model.select_current())
+
+    def update_current(self, data):
+        m = []
+        for key in self.store_model.table_columns_short:
+            m.append(data[key])
+
+        if self.store_model.current_id is None:
+            self.store_model.add(m)
+        else:
+            self.store_model.update(m)
+
+    def convert(self, data):
+        convert_data = {}
+        for i in range(len(data)):
+            convert_data[self.store_model.table_columns[i]] = data[i]
+        return convert_data
 
     def decrypt_data(self, data):
         if type(data) is list:
@@ -75,5 +102,6 @@ class MainAction(object):
 
 
 # TODO убрать
-# m = MainAction().login_in('admin','123')
+# m = MainAction().update_current()
+# print(m)
 # m = MainAction().create_prof('admin','123')
