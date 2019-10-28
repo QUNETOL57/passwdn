@@ -1,10 +1,8 @@
-import settings
+import sqlite3
 
-def first_key():
-    from random import randint
-    return randint(1000000000,9999999999999) * randint(10,99)
-try:
-    print(settings.key)
-except AttributeError:
-    with open('settings.py','a') as file:
-        file.write(f"key = {first_key()}")
+db = sqlite3.connect('base.sqlite3')
+db.row_factory = sqlite3.Row
+# dictt = db.cursor().execute(f"SELECT * FROM store").fetchall()
+
+a = db.cursor().execute("SELECT * from store WHERE id=:id", {"id": '1'}).fetchone()
+print(a)

@@ -4,20 +4,21 @@ from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
 import sys
 from models import LoginModel, StoreModel
 from controllers import MainAction
-from views import ContactView,ListView,LoginView
+from views import LoginView, DetailView
 
 
 class PasswdnMain(object):
 
     def __init__(self):
-        self.l_model = LoginModel()
-        self.m_action = MainAction()
+        self.login_model = LoginModel()
+        self.store_model = StoreModel()
+        self.main_action = MainAction()
         self.last_scene = None
 
     def screens(self, screen, scene):
         scenes = [
-            Scene([LoginView(screen, self.m_action, self.l_model)], -1, name='Login'),
-            # Scene([ListView(screen, contacts)], -1, name="Main"),
+            # Scene([LoginView(screen, self.main_action, self.login_model)], -1, name='Login'),
+            Scene([DetailView(screen, self.main_action, self.store_model)], -1, name="Detail"),
             # Scene([ContactView(screen, contacts)], -1, name="Edit Contact")
         ]
 
