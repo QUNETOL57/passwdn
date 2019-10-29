@@ -105,7 +105,8 @@ class ListView(Frame):
         self.set_theme('bright')
         # Create the form for displaying the list of contacts.
         self._list_view = ListBox(Widget.FILL_FRAME,
-                                  model.get_summary(),
+                                  self._controller.get_list(),
+                                  # model.get_summary(),
                                   name='store',
                                   add_scroll_bar=True,
                                   on_change=self._on_pick,
@@ -130,7 +131,8 @@ class ListView(Frame):
         self._delete_button.disabled = self._list_view.value is None
 
     def _reload_list(self, new_value=None):
-        self._list_view.options = self._model.get_summary()
+        # self._list_view.options = self._model.get_summary()
+        self._list_view.options = self._controller.get_list()
         self._list_view.value = new_value
 
     def _add(self):
