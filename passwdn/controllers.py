@@ -76,7 +76,7 @@ class MainAction(object):
             return self.convert(self.store_model.select_current())
 
     def update_current(self, data):
-        data = self.convert(data, True)
+        data = self.encrypt_data(self.convert(data, True))
         if self.store_model.current_id is None:
             self.store_model.add(data)
         else:
@@ -85,9 +85,10 @@ class MainAction(object):
     def get_list(self):
         data = self.store_model.get_summary()
         for i in range(len(data)):
-            val = str(data[i][1])
+            mas = self.decrypt_data(data[i])
+            val = str(mas[1])
             val = ' ' * (3 - len(val)) + val
-            data[i] = [f'{val}| {data[i][0]}', data[i][1]]
+            data[i] = [f'{val}| {mas[0]} |{mas[2]}|', mas[1]]
         return data
 
     def convert(self, data, dlist=False):
@@ -102,12 +103,14 @@ class MainAction(object):
         return convert_data
 
     def decrypt_data(self, data):
-        decrypt = []
-        for value in data:
-            decrypt.append(self.crypt_controller.decode(value))
-        f = open('1.txt', 'w')
-        f.write(decrypt)
-        f.close()
+        for i in range(len(data)):
+            data[i] = self.crypt_controller.decode(data[i])
+            f = open('1.txt', 'w')
+            f.write(str(data))
+            f.close()
+
+
+        return data
         # if type(data) is list:
         #     dec_data = []
         #     for value in data:
@@ -116,6 +119,13 @@ class MainAction(object):
         #     dec_data = self.crypt_controller.decode(data)
         # return dec_data
 
+    def encrypt_data(self, data):
+        for i in range(len(data)):
+            data[i] = self.crypt_controller.encode(data[i])
+        # f = open('1.txt', 'w')
+        # f.write(str(data))
+        # f.close()
+        return data
 
 # TODO убрать
 # m = MainAction().update_current()

@@ -81,7 +81,7 @@ class StoreModel(MainModel):
         super().__init__(self.table_name)
 
     def get_summary(self):
-        return self.db.cursor().execute(f"SELECT name, id from {self.table_name}").fetchall()
+        return self.db.cursor().execute(f"SELECT name, id, address from {self.table_name}").fetchall()
 
 # TODO убрать
 # m = LoginModel()
