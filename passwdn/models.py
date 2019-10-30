@@ -82,16 +82,3 @@ class StoreModel(MainModel):
 
     def get_summary(self):
         return self.db.cursor().execute(f"SELECT name, id, address from {self.table_name}").fetchall()
-
-# TODO убрать
-# m = LoginModel()
-# m.add(['admin', 'password'])
-# m.delete(1)
-# m.current_id = 2
-# m.update(['aaa', 'jjdfdj'])
-# print(m.select_current())
-# m.delete()
-# print(m.select_all())
-# print(m.count())
-
-# m.quit()

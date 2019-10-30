@@ -1,8 +1,6 @@
 from cryptography.fernet import Fernet
 import os.path
 
-from models import LoginModel, StoreModel
-
 
 class CryptController(object):
     def __init__(self):
@@ -46,8 +44,10 @@ class MainAction(object):
         self.crypt_controller = CryptController()
         self.login_model = login_model
         self.store_model = store_model
+        self.prof_init = None
 
     def login_in(self, login, password):
+        # TODO сделать инициализацию после идентификации
         log = self.login_model.select_all()
         for i in range(len(log)):
             for j in range(1, len(log[i]), 3):
@@ -73,7 +73,8 @@ class MainAction(object):
                 'password': ''
             }
         else:
-            return self.convert(self.store_model.select_current())
+            dec = self.decrypt_data(self.store_model.select_current())
+            return self.convert(dec)
 
     def update_current(self, data):
         data = self.encrypt_data(self.convert(data, True))
@@ -81,7 +82,6 @@ class MainAction(object):
             self.store_model.add(data)
         else:
             self.store_model.update(data)
-
     def get_list(self):
         data = self.store_model.get_summary()
         for i in range(len(data)):
@@ -103,31 +103,16 @@ class MainAction(object):
         return convert_data
 
     def decrypt_data(self, data):
+        # TODO сделать по красоте
+        data = list(data)
         for i in range(len(data)):
-            data[i] = self.crypt_controller.decode(data[i])
-            f = open('1.txt', 'w')
-            f.write(str(data))
-            f.close()
-
-
+            try:
+                data[i] = self.crypt_controller.decode(data[i])
+            except AttributeError:
+                data[i] = data[i]
         return data
-        # if type(data) is list:
-        #     dec_data = []
-        #     for value in data:
-        #         dec_data += self.crypt_controller.decode(value)
-        # else:
-        #     dec_data = self.crypt_controller.decode(data)
-        # return dec_data
 
     def encrypt_data(self, data):
         for i in range(len(data)):
             data[i] = self.crypt_controller.encode(data[i])
-        # f = open('1.txt', 'w')
-        # f.write(str(data))
-        # f.close()
         return data
-
-# TODO убрать
-# m = MainAction().update_current()
-# print(m)
-# m = MainAction().create_prof('admin','123')
