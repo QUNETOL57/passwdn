@@ -76,30 +76,56 @@ class MainAction(object):
             return self.convert(self.store_model.select_current())
 
     def update_current(self, data):
-        m = []
-        for key in self.store_model.table_columns_short:
-            m.append(data[key])
-
+        data = self.encrypt_data(self.convert(data, True))
         if self.store_model.current_id is None:
-            self.store_model.add(m)
+            self.store_model.add(data)
         else:
-            self.store_model.update(m)
+            self.store_model.update(data)
 
-    def convert(self, data):
-        convert_data = {}
+    def get_list(self):
+        data = self.store_model.get_summary()
         for i in range(len(data)):
-            convert_data[self.store_model.table_columns[i]] = data[i]
+            mas = self.decrypt_data(data[i])
+            val = str(mas[1])
+            val = ' ' * (3 - len(val)) + val
+            data[i] = [f'{val}| {mas[0]} |{mas[2]}|', mas[1]]
+        return data
+
+    def convert(self, data, dlist=False):
+        if dlist is False:
+            convert_data = {}
+            for i in range(len(data)):
+                convert_data[self.store_model.table_columns[i]] = data[i]
+        else:
+            convert_data = []
+            for key in self.store_model.table_columns_short:
+                convert_data.append(data[key])
         return convert_data
 
     def decrypt_data(self, data):
-        if type(data) is list:
-            dec_data = []
-            for value in data:
-                dec_data += self.crypt_controller.decode(value)
-        else:
-            dec_data = self.crypt_controller.decode(data)
-        return dec_data
+        for i in range(len(data)):
+            data[i] = self.crypt_controller.decode(data[i])
+            f = open('1.txt', 'w')
+            f.write(str(data))
+            f.close()
 
+
+        return data
+        # if type(data) is list:
+        #     dec_data = []
+        #     for value in data:
+        #         dec_data += self.crypt_controller.decode(value)
+        # else:
+        #     dec_data = self.crypt_controller.decode(data)
+        # return dec_data
+
+    def encrypt_data(self, data):
+        for i in range(len(data)):
+            data[i] = self.crypt_controller.encode(data[i])
+        # f = open('1.txt', 'w')
+        # f.write(str(data))
+        # f.close()
+        return data
 
 # TODO убрать
 # m = MainAction().update_current()
