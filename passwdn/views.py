@@ -1,5 +1,6 @@
 from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
     Button, TextBox, Widget
+from asciimatics.screen import Screen
 from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
 
 
@@ -62,11 +63,12 @@ class DetailView(Frame):
         # Create the form for displaying the list of contacts.
         layout = Layout([1, 10, 1], fill_frame=True)
         self.add_layout(layout)
+        # TODO сделать регулярки для валидации
         layout.add_widget(Text('Name:', 'name'), 1)
         layout.add_widget(Text('Address:', 'address'), 1)
         layout.add_widget(Text('Nick name:', 'nickname'), 1)
         layout.add_widget(Text('Email address:', 'email'), 1)
-        layout.add_widget(Text('Phone number:', 'telnumber', validator='^[0-9]*$'), 1)
+        layout.add_widget(Text('Phone number:', 'telnumber', validator='^[+]?[0-9]*$'), 1)
         layout.add_widget(Text('Secret question:', 'secretquest'), 1)
         layout.add_widget(Text('Password:', 'password'), 1)
         layout2 = Layout([1, 1, 1, 1])
@@ -103,6 +105,8 @@ class ListView(Frame):
         self._model = model
         self._controller = controller
         self.set_theme('bright')
+        self.palette['selected_focus_field'] = (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_GREEN)
+        # self.set_theme("tlj256")
         # Create the form for displaying the list of contacts.
         self._list_view = ListBox(Widget.FILL_FRAME,
                                   self._controller.get_list(),
