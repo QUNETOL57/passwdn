@@ -1,5 +1,5 @@
 from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
-    Button, TextBox, Widget
+    Button, TextBox, Widget, PopUpDialog
 from asciimatics.screen import Screen
 from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
 
@@ -53,7 +53,6 @@ class DetailView(Frame):
                                          screen.width * 2 // 5,
                                          hover_focus=True,
                                          can_scroll=False,
-                                         # title='Contact Details',
                                          reduce_cpu=True)
         # Save off the model that accesses the contacts database.
         self._model = model
@@ -71,6 +70,7 @@ class DetailView(Frame):
         layout.add_widget(Text('Phone number:', 'telnumber', validator='^[+]?[0-9]*$'), 1)
         layout.add_widget(Text('Secret question:', 'secretquest'), 1)
         layout.add_widget(Text('Password:', 'password'), 1)
+        # layout.add_widget(Button('gen', self._gen_pass), 2)
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
         layout2.add_widget(Button('OK', self._ok), 0)
@@ -106,7 +106,7 @@ class ListView(Frame):
         self._controller = controller
         self.set_theme('bright')
         self.palette['selected_focus_field'] = (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_GREEN)
-        # self.set_theme("tlj256")
+
         # Create the form for displaying the list of contacts.
         self._list_view = ListBox(Widget.FILL_FRAME,
                                   self._controller.get_list(),
@@ -150,9 +150,21 @@ class ListView(Frame):
 
     def _delete(self):
         self.save()
-        self._model.delete(self.data['store'])
+        self._model.current_id = self.data['store']
+        # self._model.delete(self.data['store'])
+        self._controller.delete_current()
         self._reload_list()
 
+    def _quit(self):
+        self._scene.add_effect(
+            PopUpDialog(self._screen,
+                        "Are you sure?",
+                        ["Yes", "No"],
+                        has_shadow=True,
+                        on_close=self._quit_on_yes))
+
     @staticmethod
-    def _quit():
-        raise StopApplication('User pressed quit')
+    def _quit_on_yes(selected):
+        # Yes is the first button
+        if selected == 0:
+            raise StopApplication("User requested exit")

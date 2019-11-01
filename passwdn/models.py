@@ -1,10 +1,11 @@
 import sqlite3
+from datetime import datetime
 
 
 class MainModel(object):
     db_name = 'base.sqlite3'
     db_tables = {
-        'login': ['id', 'login', 'password'],
+        'login': ['id', 'login', 'password', 'session'],
         'store': ['id', 'name', 'address', 'nickname', 'email', 'telnumber', 'secretquest', 'password'],
     }
 
@@ -21,7 +22,13 @@ class MainModel(object):
         for key, values in self.db_tables.items():
             self.sql = f"CREATE TABLE IF NOT EXISTS {key}("
             for value in values:
-                self.sql += f'{value} INTEGER PRIMARY KEY, ' if value == 'id' else f'{value} TEXT, '
+                if value == 'id':
+                    value = f'{value} INTEGER PRIMARY KEY, '
+                elif value == 'session':
+                    value = f'{value} DATETIME, '
+                else:
+                    value = f'{value} TEXT, '
+                self.sql += value
             self.sql = self.sql[:-2] + ');'
             self.db.cursor().execute(self.sql)
             self.db.commit()
@@ -42,9 +49,13 @@ class MainModel(object):
         self.db.cursor().execute(sql)
         self.db.commit()
 
-    def delete(self, id):
-        sql = f"DELETE FROM {self.table_name} WHERE id={id}"
+    def delete(self):
+        sql = f"DELETE FROM {self.table_name} WHERE id={self.current_id}"
         self.db.cursor().execute(sql)
+        self.db.commit()
+
+    def delete_all(self):
+        self.db.cursor().execute(f"DELETE FROM {self.table_name}")
         self.db.commit()
 
     def update(self, data):
@@ -72,6 +83,12 @@ class LoginModel(MainModel):
 
     def __init__(self):
         super().__init__(self.table_name)
+
+    def session_update(self):
+        now = datetime.now()
+        sql = f"UPDATE {self.table_name} SET session = '{now}' WHERE id={self.current_id}"
+        self.db.cursor().execute(sql)
+        self.db.commit()
 
 
 class StoreModel(MainModel):
