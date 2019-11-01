@@ -17,10 +17,9 @@ class PasswdnMain(object):
 
     def screens(self, screen, scene):
         scenes = [
-            # Scene([LoginView(screen, self.main_action, self.login_model)], -1, name='Login'),
+            Scene([LoginView(screen, self.main_action, self.login_model)], -1, name='Login'),
             Scene([ListView(screen, self.main_action, self.store_model)], -1, name="List"),
             Scene([DetailView(screen, self.main_action, self.store_model)], -1, name="Detail")
-
         ]
 
         screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
