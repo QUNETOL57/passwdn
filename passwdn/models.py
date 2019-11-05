@@ -1,9 +1,10 @@
 import sqlite3
+import sys
 from datetime import datetime
 
 
 class MainModel(object):
-    db_name = 'base.sqlite3'
+    db_name = sys.path[0] + '/local/' + 'base.sqlite3'
     db_tables = {
         'login': ['id', 'login', 'password', 'session'],
         'store': ['id', 'name', 'address', 'nickname', 'email', 'telnumber', 'secretquest', 'password'],
