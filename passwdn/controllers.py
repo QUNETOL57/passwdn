@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 import os.path
-
+import sys
 import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
@@ -14,8 +14,7 @@ class GenPass(object):
 class CryptController(object):
     def __init__(self):
         self.step = 13
-        # TODO переместить в local
-        self.file = 'cipher.key'
+        self.file = sys.path[0] + '/local/' + 'cipher.key'
         self.alpha = ''.join(map(chr, range(ord(' '), ord('я') + 1)))
         self.key = self.get_key()
         self.cipher = Fernet(bytes(str(self.get_key()), encoding='utf-8'))
@@ -159,7 +158,7 @@ class MainAction(object):
 
 class Synchronization(object):
     def __init__(self):
-        self.CREDENTIALS_FILE = 'creds.json'
+        self.CREDENTIALS_FILE = sys.path[0] + '/local/' + 'creds.json'
         self.spreadsheet_id = '1hhjCUhlmn6OBt8WdDgKtMxEVbDsZcfRyeOu53qsigSA'
         self.login_range = 'A1:D10'
         self.store_range = 'E1:L1000'
